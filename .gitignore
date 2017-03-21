@@ -1,0 +1,13 @@
+/bin/
+/target/
+/build/
+.metadata
+.DS_Store
+._*
+.Trashes
+*~
+.project
+.classpath
+.settings/
+.idea
+*.iml
