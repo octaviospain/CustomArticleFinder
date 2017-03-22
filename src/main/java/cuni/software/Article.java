@@ -1,20 +1,19 @@
 package cuni.software;
 
-import java.net.*;
 import java.util.*;
 
 public class Article {
 
-    private URL url;
+    private String uri;
     private Set<String> tags;
 
-    public Article(URL url) {
-        this.url = url;
+    public Article(String uri) {
+        this.uri = uri;
         tags = new HashSet<>();
     }
 
-    public URL getUrl() {
-        return url;
+    public String getUri() {
+        return uri;
     }
 
     public void addTags(Set<String> newTags) {
