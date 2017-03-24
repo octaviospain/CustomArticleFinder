@@ -84,5 +84,13 @@
             <version>1.7.24</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.htmlparser</groupId>
+            <artifactId>htmlparser</artifactId>
+            <scope>system</scope>
+            <version>1.2</version>
+            <systemPath>${project.basedir}/lib/src0_82.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>
