@@ -29,7 +29,7 @@ public class RssFeed {
     }
 
     private Article syndLinkToArticle(SyndEntry syndEntry) {
-        return new Article(syndEntry.getUri());
+        return new Article(0, syndEntry.getUri());
     }
 
     public List<Article> getArticles() {
