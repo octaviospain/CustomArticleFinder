@@ -30,15 +30,35 @@ public class Article {
         return tags;
     }
 
-    public void addTerm(String term) {
-        terms.add(term);
+    public void addTerms(Collection<String> newTerms) {
+        terms.addAll(newTerms);
+    }
+
+    public Multiset<String> getTerms() {
+        return terms;
     }
 
     public int f(String term) {
-        return 0;
+        return terms.count(term);
     }
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, uri);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean equals = false;
+        if (object instanceof Article) {
+            Article objectArticle = (Article) object;
+            if (objectArticle.getId() == this.id && objectArticle.getUri() == this.uri)
+                equals = true;
+        }
+        return equals;
     }
 }

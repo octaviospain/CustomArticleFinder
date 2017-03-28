@@ -19,7 +19,7 @@ public class CustomArticleFinderRunner {
             List<RssFeed> loadedRssFeeds = RssFeedParse.fromFile(new File(args[0]));
             System.out.println("\n\tLoaded rss feeds:");
             loadedRssFeeds.forEach(System.out::println);
-            SearchEngine searchEngine = new SearchEngine(loadedRssFeeds);
+            SearchEngine searchEngine = new SearchEngine(Collections.emptyList());
 
             while (! query.equalsIgnoreCase("exit")) {
                 System.out.println("\n\tEnter the query in order to find related articles. Type 'exit' to quit.");
