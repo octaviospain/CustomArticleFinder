@@ -20,6 +20,10 @@ public class RssFeed {
         addArticlesFromFeed();
     }
 
+    public List<Article> getArticles() {
+        return articles;
+    }
+
     private void addArticlesFromFeed() throws IOException, FeedException {
         SyndFeed feed = new SyndFeedInput().build(new XmlReader(url));
         List<SyndEntry> feedEntries = feed.getEntries();
@@ -29,11 +33,31 @@ public class RssFeed {
     }
 
     private Article syndLinkToArticle(SyndEntry syndEntry) {
-        return new Article(0, syndEntry.getUri());
+        Article newArticle = new Article(syndEntry.getUri());
+        addTermsAndTagsToArticle(newArticle);
+        return newArticle;
     }
 
-    public List<Article> getArticles() {
-        return articles;
+    /**
+     * Traverses the HTML data of the article URI and adds the relevant
+     * terms and tags to the instance.
+     *
+     * @param newArticle
+     */
+    private void addTermsAndTagsToArticle(Article newArticle) {
+        String uri = newArticle.getUri();
+        Set<String> articleTerms = new HashSet<>();
+        Set<String> articleTags = new HashSet<>();
+
+        /**
+         * // TODO
+         * Find a way to get the html data of the article and traverse it
+         * until find the relevant content and add each term to the article instance,
+         * as well as relevant tags that categorize the article itself
+         */
+
+        newArticle.addTerms(articleTerms);
+        newArticle.addTags(articleTags);
     }
 
     @Override

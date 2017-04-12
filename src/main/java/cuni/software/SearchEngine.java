@@ -2,6 +2,12 @@ package cuni.software;
 
 import java.util.*;
 
+/**
+ * This class isolates the behaviour of a Search Engine that uses a vector model approach
+ * in order to store and find {@link Article} instances given string query.
+ *
+ * @author Octavio Calleya
+ */
 public class SearchEngine {
 
     private Collection<Article> articles;
@@ -18,6 +24,10 @@ public class SearchEngine {
     public void addArticles(Collection<Article> newArticles) {
         articles.addAll(newArticles);
         computeStatistics(newArticles);
+    }
+
+    public List<Article> findRelatedArticles(String query) {
+        throw new UnsupportedOperationException("Unimplemented yet");
     }
 
     private void computeStatistics(Collection<Article> articles) {

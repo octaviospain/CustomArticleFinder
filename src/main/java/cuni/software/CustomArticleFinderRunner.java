@@ -4,6 +4,7 @@ import org.slf4j.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class CustomArticleFinderRunner {
 
@@ -17,16 +18,23 @@ public class CustomArticleFinderRunner {
 
         try {
             List<RssFeed> loadedRssFeeds = RssFeedParse.fromFile(new File(args[0]));
-            System.out.println("\n\tLoaded rss feeds:");
-            loadedRssFeeds.forEach(System.out::println);
-            SearchEngine searchEngine = new SearchEngine(Collections.emptyList());
+            System.out.println("\n\t\tLoaded rss feeds:");
+            loadedRssFeeds.forEach(feed -> {
+                System.out.println("\n\tLoaded articles:");
+                feed.getArticles().forEach(System.out::println);
+            });
+
+            List<Article> allArticles = loadedRssFeeds.stream()
+                                                      .flatMap(feed -> feed.getArticles().stream())
+                                                      .collect(Collectors.toList());
+
+            SearchEngine searchEngine = new SearchEngine(allArticles);
 
             while (! query.equalsIgnoreCase("exit")) {
                 System.out.println("\n\tEnter the query in order to find related articles. Type 'exit' to quit.");
                 query = input.nextLine();
 
-                ArticleFinder articleFinder = new ArticleFinder(query, searchEngine);
-                articleFinder.findRelatedArticles().forEach(article -> System.out.println(article.getUri()));
+                searchEngine.findRelatedArticles(query).forEach(article -> System.out.println(article.getUri()));
             }
         }
         catch (Exception exception) {

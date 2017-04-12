@@ -6,13 +6,15 @@ import java.util.*;
 
 public class Article {
 
+    private static int articleSequenceId = 0;
+
     private int id;
     private String uri;
     private Set<String> tags;
     private Multiset<String> terms;
 
-    public Article(int id, String uri) {
-        this.id = id;
+    public Article(String uri) {
+        id = ++ articleSequenceId;
         this.uri = uri;
         tags = new HashSet<>();
         terms = HashMultiset.create();
@@ -60,5 +62,10 @@ public class Article {
                 equals = true;
         }
         return equals;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + id + "][" + uri + "]";
     }
 }

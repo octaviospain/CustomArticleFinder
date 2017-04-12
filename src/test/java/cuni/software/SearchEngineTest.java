@@ -7,11 +7,10 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-
 public class SearchEngineTest {
 
-    SearchEngine searchEngine;
-    Collection<Article> testArticles;
+    private SearchEngine searchEngine;
+    private Collection<Article> testArticles;
 
     private double getExpectedWeight(String term, Article article) {
         return getTf(term, article.f(term)) * getIdf(term);
