@@ -3,6 +3,7 @@ package cuni.software;
 import org.slf4j.*;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.*;
 
@@ -16,8 +17,21 @@ public class CustomArticleFinderRunner {
         System.out.println("****\tCustom Article Finder\t****");
         String query = "";
 
+        if (args.length == 0) {
+            LOG.error("The first argument should be the file with RSS feeds.");
+            return;
+        }
+
+        List<RssFeed> loadedRssFeeds;
         try {
-            List<RssFeed> loadedRssFeeds = RssFeedParse.fromFile(new File(args[0]));
+            loadedRssFeeds = RssFeedParse.fromFile(new File(args[0]));
+        } catch (IOException e) {
+            LOG.error("The first argument should be the file with RSS feeds.", e);
+            return;
+        }
+
+        SearchEngine searchEngine;
+        try {
             System.out.println("\n\t\tLoaded rss feeds:");
             loadedRssFeeds.forEach(feed -> {
                 System.out.println("\n\tLoaded articles:");
@@ -28,18 +42,61 @@ public class CustomArticleFinderRunner {
                                                       .flatMap(feed -> feed.getArticles().stream())
                                                       .collect(Collectors.toList());
 
-            SearchEngine searchEngine = new SearchEngine(allArticles);
+            searchEngine = new SearchEngine(allArticles);
+        }
+        catch (Exception e) {
+            LOG.error("Error during loading of articles:", e);
+            return;
+        }
+
+        try {
+            menu();
+            query = input.nextLine();
 
             while (! query.equalsIgnoreCase("exit")) {
-                System.out.println("\n\tEnter the query in order to find related articles. Type 'exit' to quit.");
-                query = input.nextLine();
 
-                searchEngine.findRelatedArticles(query).forEach(article -> System.out.println(article.getUri()));
+                if (query.equalsIgnoreCase("menu")) {
+                    menu();
+                } else if (query.startsWith("search query ")) {
+                    try {
+                        searchEngine.findRelatedArticles(query.substring(13)).forEach(article -> System.out.println(article.getUri()));
+                    }
+                    catch (Exception e) {
+                        LOG.error("Error during finding:", e);
+                    }
+                } else if (query.startsWith("search date ")) {
+                    String[] dates = query.substring(12).split("/");
+                    try {
+                        LocalDate date = LocalDate.of(Integer.parseInt(dates[2]), Integer.parseInt(dates[1]), Integer.parseInt(dates[0]));
+                        try {
+                            //searchEngine.findRelatedArticles(date).forEach(article -> System.out.println(article.getUri()));
+                        }
+                        catch (Exception e) {
+                            LOG.error("Error during finding:", e);
+                        }
+                    }
+                    catch (Exception e) {
+                        LOG.error("Error during parsing of date:", e);
+                    }
+                } else {
+                    System.out.println("The command '" + query + "' is not valid.");
+                    menu();
+                }
+
+                query = input.nextLine();
             }
         }
         catch (Exception exception) {
             LOG.error("Error: " + exception.getMessage());
             exception.printStackTrace();
         }
+    }
+
+    private static void menu() {
+        System.out.println("\n\tYou can type one of the following commands:");
+        System.out.println("'search query YOUR_QUERY' to find articles related to given query.");
+        System.out.println("'search date DD/MM/YYYY' to find articles since given date.");
+        System.out.println("'menu' to show the list of possible commands.");
+        System.out.println("'exit' to quit the program.");
     }
 }
