@@ -2,6 +2,7 @@ package cuni.software;
 
 import com.google.common.collect.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class Article {
@@ -12,8 +13,17 @@ public class Article {
     private String uri;
     private Set<String> tags;
     private Multiset<String> terms;
+    private LocalDate pubDate;
 
-    public Article(String uri) {
+    public LocalDate getPubDate() {
+		return pubDate;
+	}
+
+	public void setPubDate(LocalDate pubDate) {
+		this.pubDate = pubDate;
+	}
+
+	public Article(String uri) {
         id = ++ articleSequenceId;
         this.uri = uri;
         tags = new HashSet<>();

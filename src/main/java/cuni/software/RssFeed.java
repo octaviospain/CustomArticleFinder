@@ -4,8 +4,12 @@ import com.google.common.base.*;
 import com.rometools.rome.feed.synd.*;
 import com.rometools.rome.io.*;
 
+import cuni.software.Article;
+import cuni.software.Parser;
+
 import java.io.*;
 import java.net.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.*;
 
@@ -34,7 +38,8 @@ public class RssFeed {
 
     private Article syndLinkToArticle(SyndEntry syndEntry) {
         Article newArticle = new Article(syndEntry.getUri());
-        addTermsAndTagsToArticle(newArticle);
+        addTermsToArticle(newArticle);
+        newArticle.setPubDate(LocalDate.parse(syndEntry.getPublishedDate().toString()));
         return newArticle;
     }
 
@@ -44,20 +49,11 @@ public class RssFeed {
      *
      * @param newArticle
      */
-    private void addTermsAndTagsToArticle(Article newArticle) {
+    private void addTermsToArticle(Article newArticle) {
         String uri = newArticle.getUri();
-        Set<String> articleTerms = new HashSet<>();
-        Set<String> articleTags = new HashSet<>();
-
-        /**
-         * // TODO
-         * Find a way to get the html data of the article and traverse it
-         * until find the relevant content and add each term to the article instance,
-         * as well as relevant tags that categorize the article itself
-         */
-
+        Parser parser = new Parser();
+        Set<String> articleTerms = parser.parseLink(uri);    
         newArticle.addTerms(articleTerms);
-        newArticle.addTags(articleTags);
     }
 
     @Override
