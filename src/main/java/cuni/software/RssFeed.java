@@ -1,15 +1,13 @@
 package cuni.software;
 
 import com.google.common.base.*;
+import com.google.common.collect.*;
 import com.rometools.rome.feed.synd.*;
 import com.rometools.rome.io.*;
 
-import cuni.software.Article;
-import cuni.software.Parser;
-
 import java.io.*;
 import java.net.*;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -22,6 +20,10 @@ public class RssFeed {
         this.url = url;
         articles = new ArrayList<>();
         addArticlesFromFeed();
+    }
+
+    public URL getUrl() {
+        return url;
     }
 
     public List<Article> getArticles() {
@@ -39,7 +41,11 @@ public class RssFeed {
     private Article syndLinkToArticle(SyndEntry syndEntry) {
         Article newArticle = new Article(syndEntry.getUri());
         addTermsToArticle(newArticle);
-        newArticle.setPubDate(LocalDate.parse(syndEntry.getPublishedDate().toString()));
+        int length = syndEntry.getPublishedDate().toString().length();
+        int year = Integer.parseInt(syndEntry.getPublishedDate().toString().substring(length - 4, length));
+        int month = syndEntry.getPublishedDate().getMonth() + 1;
+        int day = Integer.parseInt(syndEntry.getPublishedDate().toString().substring(8, 10));
+        newArticle.setPubDate(LocalDate.of(year, month, day));
         return newArticle;
     }
 
@@ -52,7 +58,7 @@ public class RssFeed {
     private void addTermsToArticle(Article newArticle) {
         String uri = newArticle.getUri();
         Parser parser = new Parser();
-        Set<String> articleTerms = parser.parseLink(uri);    
+        Multiset<String> articleTerms = parser.parseLink(uri);
         newArticle.addTerms(articleTerms);
     }
 

@@ -1,23 +1,22 @@
 package cuni.software;
 
-import java.io.IOException;
-import java.util.*;
+import com.google.common.collect.*;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-import org.jsoup.nodes.Element;
+import java.io.*;
 
 public class Parser {
 	
-	Set<String> articleTerms = new HashSet<>();
+	private Multiset<String> articleTerms = HashMultiset.create();
 	
 	/**
 	 * This method retrieves terms from the articles found in the provided link
 	 * @param link is a URL link to the atricle.
 	 * @return set of terms. 
 	 */
-	public Set<String> parseLink(String link){
+	public Multiset<String> parseLink(String link){
 		try {
 			Document doc = Jsoup.connect(link).get();
 			Elements elements = doc.getElementsByTag("p");

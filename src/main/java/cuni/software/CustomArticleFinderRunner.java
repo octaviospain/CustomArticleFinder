@@ -3,7 +3,7 @@ package cuni.software;
 import org.slf4j.*;
 
 import java.io.*;
-import java.time.LocalDate;
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -34,7 +34,7 @@ public class CustomArticleFinderRunner {
         try {
             System.out.println("\n\t\tLoaded rss feeds:");
             loadedRssFeeds.forEach(feed -> {
-                System.out.println("\n\tLoaded articles:");
+                System.out.println("\t\t" + feed.getUrl().toString() + "\n\tLoaded articles:");
                 feed.getArticles().forEach(System.out::println);
             });
 
@@ -42,7 +42,8 @@ public class CustomArticleFinderRunner {
                                                       .flatMap(feed -> feed.getArticles().stream())
                                                       .collect(Collectors.toList());
 
-            searchEngine = new SearchEngine(allArticles);
+            searchEngine = new SearchEngine();
+            searchEngine.addArticles(allArticles);
         }
         catch (Exception e) {
             LOG.error("Error during loading of articles:", e);
@@ -59,7 +60,9 @@ public class CustomArticleFinderRunner {
                     menu();
                 } else if (query.startsWith("search query ")) {
                     try {
-                        searchEngine.findRelatedArticles(query.substring(13)).forEach(article -> System.out.println(article.getUri()));
+                        List<Article> relatedArticles = searchEngine.findRelatedArticles(query.substring(13));
+                        System.out.println("Found " + relatedArticles.size() + " articles");
+                        relatedArticles.forEach(article -> System.out.println(article.getUri()));
                     }
                     catch (Exception e) {
                         LOG.error("Error during finding:", e);
