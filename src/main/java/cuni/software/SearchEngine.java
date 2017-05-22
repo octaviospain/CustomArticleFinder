@@ -26,16 +26,16 @@ public class SearchEngine {
         computeStatistics(newArticles);
     }
 
-    public List<Article> findRelatedArticles(String query) {
+    public List<Article> findRelatedArticles(String query, double similarityThreshold) {
         Article queryArticle = new Article("");
         Set<String> queryTerms = new HashSet<>();
-        StringTokenizer stk = new StringTokenizer(query, " ");
+        StringTokenizer stk = new StringTokenizer(query.toLowerCase(), " ");
         while (stk.hasMoreElements())
             queryTerms.add(stk.nextToken().toLowerCase());
         queryArticle.addTerms(queryTerms);
 
         ForkJoinPool forkJoinPool = new ForkJoinPool(6);
-        RecursiveSearch recursiveSearch = new RecursiveSearch(queryArticle, articles, termStatistics.keySet());
+        RecursiveSearch recursiveSearch = new RecursiveSearch(queryArticle, articles, termStatistics.keySet(), similarityThreshold);
         return forkJoinPool.invoke(recursiveSearch);
     }
 

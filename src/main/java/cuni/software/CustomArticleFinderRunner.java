@@ -60,7 +60,7 @@ public class CustomArticleFinderRunner {
                     menu();
                 } else if (query.startsWith("search query ")) {
                     try {
-                        List<Article> relatedArticles = searchEngine.findRelatedArticles(query.substring(13));
+                        List<Article> relatedArticles = searchEngine.findRelatedArticles(query.substring(13), 1.6);
                         System.out.println("Found " + relatedArticles.size() + " articles");
                         relatedArticles.forEach(article -> System.out.println(article.getUri()));
                     }
