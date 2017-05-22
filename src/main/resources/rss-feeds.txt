@@ -1,3 +1,1 @@
-http://feeds.feedburner.com/IeeeSpectrumFullText
-http://createdigitalmusic.com/feed/
-http://blog.codefx.org/feed/
+http://feeds.bbci.co.uk/news/rss.xml

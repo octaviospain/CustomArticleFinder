@@ -1,6 +1,7 @@
 package cuni.software;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * This class isolates the behaviour of a Search Engine that uses a vector model approach
@@ -10,15 +11,14 @@ import java.util.*;
  */
 public class SearchEngine {
 
-    private Collection<Article> articles;
+    private List<Article> articles;
     private Map<String, TermStatistics> termStatistics;
     private Map<String, Double> tfs;
 
-    public SearchEngine(Collection<Article> initialArticles) {
-        articles = initialArticles;
+    public SearchEngine() {
+        articles = new ArrayList<>();
         termStatistics = new HashMap<>();
         tfs = new HashMap<>();
-        computeStatistics(articles);
     }
 
     public void addArticles(Collection<Article> newArticles) {
@@ -26,12 +26,21 @@ public class SearchEngine {
         computeStatistics(newArticles);
     }
 
-    public List<Article> findRelatedArticles(String query) {
-        throw new UnsupportedOperationException("Unimplemented yet");
+    public List<Article> findRelatedArticles(String query, double similarityThreshold) {
+        Article queryArticle = new Article("");
+        Set<String> queryTerms = new HashSet<>();
+        StringTokenizer stk = new StringTokenizer(query.toLowerCase(), " ");
+        while (stk.hasMoreElements())
+            queryTerms.add(stk.nextToken().toLowerCase());
+        queryArticle.addTerms(queryTerms);
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool(6);
+        RecursiveSearch recursiveSearch = new RecursiveSearch(queryArticle, articles, termStatistics.keySet(), similarityThreshold);
+        return forkJoinPool.invoke(recursiveSearch);
     }
 
     private void computeStatistics(Collection<Article> articles) {
-        articles.parallelStream().forEach(article -> article.getTerms().forEach(term -> {
+        articles.forEach(article -> article.getTerms().forEach(term -> {
             updateTermStatistics(term);
             tfs.put(article.getId() + term, computeNormalizedTermFrequency(term, article));
         }));

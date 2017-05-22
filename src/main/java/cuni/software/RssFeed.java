@@ -1,11 +1,13 @@
 package cuni.software;
 
 import com.google.common.base.*;
+import com.google.common.collect.*;
 import com.rometools.rome.feed.synd.*;
 import com.rometools.rome.io.*;
 
 import java.io.*;
 import java.net.*;
+import java.time.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -18,6 +20,10 @@ public class RssFeed {
         this.url = url;
         articles = new ArrayList<>();
         addArticlesFromFeed();
+    }
+
+    public URL getUrl() {
+        return url;
     }
 
     public List<Article> getArticles() {
@@ -34,7 +40,12 @@ public class RssFeed {
 
     private Article syndLinkToArticle(SyndEntry syndEntry) {
         Article newArticle = new Article(syndEntry.getUri());
-        addTermsAndTagsToArticle(newArticle);
+        addTermsToArticle(newArticle);
+        int length = syndEntry.getPublishedDate().toString().length();
+        int year = Integer.parseInt(syndEntry.getPublishedDate().toString().substring(length - 4, length));
+        int month = syndEntry.getPublishedDate().getMonth() + 1;
+        int day = Integer.parseInt(syndEntry.getPublishedDate().toString().substring(8, 10));
+        newArticle.setPubDate(LocalDate.of(year, month, day));
         return newArticle;
     }
 
@@ -44,20 +55,11 @@ public class RssFeed {
      *
      * @param newArticle
      */
-    private void addTermsAndTagsToArticle(Article newArticle) {
+    private void addTermsToArticle(Article newArticle) {
         String uri = newArticle.getUri();
-        Set<String> articleTerms = new HashSet<>();
-        Set<String> articleTags = new HashSet<>();
-
-        /**
-         * // TODO
-         * Find a way to get the html data of the article and traverse it
-         * until find the relevant content and add each term to the article instance,
-         * as well as relevant tags that categorize the article itself
-         */
-
+        Parser parser = new Parser();
+        Multiset<String> articleTerms = parser.parseLink(uri);
         newArticle.addTerms(articleTerms);
-        newArticle.addTags(articleTags);
     }
 
     @Override
