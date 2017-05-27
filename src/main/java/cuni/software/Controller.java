@@ -1,6 +1,11 @@
 package cuni.software;
 
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import com.google.common.io.*;
+import com.rometools.rome.io.*;
 import javafx.application.*;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.*;
 import javafx.fxml.*;
@@ -11,7 +16,9 @@ import javafx.stage.FileChooser.*;
 import javafx.util.converter.*;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
+import java.util.Objects;
 import java.util.stream.*;
 
 /**
@@ -43,10 +50,11 @@ public class Controller {
         loadButton.disableProperty().bind(searchingProperty);
         loadButton.setOnAction(e -> loadRssFromFile());
         searchButton.setOnAction(e -> performSearch());
-        DoubleSpinnerValueFactory doubleSpinnerValueFactory = new DoubleSpinnerValueFactory(1.550, 1.575);
+        DoubleSpinnerValueFactory doubleSpinnerValueFactory = new DoubleSpinnerValueFactory(1.500, 1.575);
         doubleSpinnerValueFactory.setAmountToStepBy(0.00025);
         doubleSpinnerValueFactory.setConverter(new DoubleStringConverter());
         similaritySpinner.setValueFactory(doubleSpinnerValueFactory);
+        similaritySpinner.setEditable(true);
     }
 
     private void performSearch() {
@@ -84,7 +92,7 @@ public class Controller {
 
     private void loadTask(File feedsFile) {
         try {
-            loadedRssFeeds = RssFeedParse.fromFile(feedsFile);
+            loadedRssFeeds = fromFile(feedsFile);
             printParsedFeeds();
             addToSearchEngine();
         }
@@ -94,6 +102,25 @@ public class Controller {
         finally {
             Platform.runLater(() -> searchingProperty.setValue(false));
         }
+    }
+
+    private List<RssFeed> fromFile(File file) throws IOException {
+        ImmutableList<String> lines = Files.asCharSource(file, Charsets.UTF_8).readLines();
+        return lines.stream()
+                    .map(this::createRssFeedFromUrl)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+    }
+
+    private RssFeed createRssFeedFromUrl(String url) {
+        RssFeed rssFeed = null;
+        try {
+            rssFeed = new RssFeed(new URL(url));
+        }
+        catch (IOException | FeedException exception) {
+            log("Invalid url: " + url);
+        }
+        return rssFeed;
     }
 
     private void addToSearchEngine() {
