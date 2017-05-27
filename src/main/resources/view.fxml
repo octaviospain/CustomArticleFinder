@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cuni.software.Controller">
    <top>
-      <HBox BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
          </BorderPane.margin>
@@ -22,7 +21,12 @@
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Spinner fx:id="similaritySpinner" prefWidth="120.0">
+            <Label text="CosSim">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Label>
+            <Spinner fx:id="similaritySpinner" prefWidth="100.0">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
